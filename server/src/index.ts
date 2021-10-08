@@ -1,9 +1,10 @@
 import { ApolloServer } from 'apollo-server-express'
-import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core'
 import express from 'express'
-import http from 'http'
+import { createServer } from 'http'
 import cors from 'cors'
 import { makeExecutableSchema } from '@graphql-tools/schema'
+import { execute, subscribe } from 'graphql'
+import { SubscriptionServer } from 'subscriptions-transport-ws'
 
 import typeDefs from './typeDefs'
 import { resolvers } from './resolvers'
@@ -19,11 +20,23 @@ export const schema = makeExecutableSchema({
 
 const app = express()
 app.use(cors())
-const httpServer = http.createServer(app)
+
+const httpServer = createServer(app)
 
 const server = new ApolloServer({
   schema,
-  context: ({ req }: { req: any }): Context => {
+  plugins: [
+    {
+      async serverWillStart() {
+        return {
+          async drainServer() {
+            subscriptionServer.close()
+          },
+        }
+      },
+    },
+  ],
+  context: ({ req }): Context => {
     const token = req.headers.authorization
     try {
       const { userId } = verifyToken(token)
@@ -41,8 +54,19 @@ const server = new ApolloServer({
 
     return err
   },
-  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 })
+
+const subscriptionServer = SubscriptionServer.create(
+  {
+    schema,
+    execute,
+    subscribe,
+  },
+  {
+    server: httpServer,
+    path: server.graphqlPath,
+  },
+)
 
 const start = async () => {
   console.log('-------------------------------------------------')
@@ -60,6 +84,7 @@ const start = async () => {
 
   httpServer.listen({ port }, () => {
     console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`)
+    console.log(`🚀 Subscriptions ready at ws://localhost:${port}${server.graphqlPath}`)
   })
 }
 
