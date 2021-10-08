@@ -1,0 +1,8 @@
+type Mutation {
+  login(login: String!, password: String!): LoginPayload!
+  signup(input: CreateUserInput!): LoginPayload!
+}
+
+type LoginPayload {
+  accessToken: String!
+}
