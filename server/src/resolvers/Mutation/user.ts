@@ -1,4 +1,4 @@
-import { ApolloError } from 'apollo-server'
+import { ApolloError } from 'apollo-server-core'
 import { MutationResolvers } from '../../generated/graphql'
 import { UserModel } from '../../db/models'
 import { createUserDoc } from '../../services/user'

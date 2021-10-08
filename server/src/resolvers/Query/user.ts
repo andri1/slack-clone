@@ -1,7 +1,7 @@
 import { QueryResolvers } from '../../generated/graphql'
 import { UserModel } from '../../db/models'
 import { Context } from '../../types/context'
-import { ApolloError } from 'apollo-server'
+import { ApolloError } from 'apollo-server-core'
 
 export const user: QueryResolvers['user'] = async (_, { id }) => {
   const userDoc = await UserModel.findById(id).lean()

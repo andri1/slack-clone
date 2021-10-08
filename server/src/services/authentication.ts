@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { ApolloError } from 'apollo-server'
+import { ApolloError } from 'apollo-server-core'
 import { UserModel } from '../db/models'
 import { UserDoc } from '../types'
 import { JWT_SECRET_KEY, JWT_EXP } from '../config'

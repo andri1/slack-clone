@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import { ApolloError } from 'apollo-server'
+import { ApolloError } from 'apollo-server-core'
 import { MutationResolvers, MutationLoginArgs } from '../../generated/graphql'
 import { findUserByLogin, makeAccessToken } from '../../services/authentication'
 import { createUserDoc } from '../../services/user'
