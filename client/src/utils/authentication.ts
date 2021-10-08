@@ -1,11 +1,12 @@
 import Cookies from 'js-cookie'
 import jwtDecode from 'jwt-decode'
-
-const TOKEN_STORAGE_KEY = '_tok'
+import { TOKEN_STORAGE_KEY } from 'config'
 
 export const saveToken = (token: string) => {
+  const decodedToken: DecodedToken = jwtDecode(token)
+
   Cookies.set(TOKEN_STORAGE_KEY, token, {
-    expires: 30,
+    expires: new Date(+decodedToken.exp * 1000),
     secure: true,
   })
 }
@@ -18,7 +19,13 @@ export const unsetTokens = () => {
   Cookies.remove(TOKEN_STORAGE_KEY)
 }
 
-export const getTokenData = (): any | null => {
+export const getTokenData = (): DecodedToken | null => {
   const token = getToken()
   return token ? jwtDecode(token) : null
+}
+
+type DecodedToken = {
+  userId: string
+  exp: string
+  iat: string
 }
