@@ -1,2 +1,2 @@
-export * from './Channels'
-export { default } from './Channels'
+export * from './Channel'
+export { default } from './Channel'

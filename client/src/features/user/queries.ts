@@ -9,3 +9,12 @@ export const GET_ME = gql`
   }
   ${USER_INFO_FRAGMENT}
 `
+
+export const GET_USER = gql`
+  query GetUser($id: ID!) {
+    user(id: $id) {
+      ...UserInfo
+    }
+  }
+  ${USER_INFO_FRAGMENT}
+`

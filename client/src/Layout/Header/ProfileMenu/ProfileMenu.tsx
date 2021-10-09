@@ -7,9 +7,9 @@ import IconButton from '@mui/material/IconButton'
 import Avatar from '@mui/material/Avatar'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import Divider from '@mui/material/Divider'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+// import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import Typography from '@mui/material/Typography'
-import LockRoundedIcon from '@mui/icons-material/LockRounded'
+import LogoutIcon from '@mui/icons-material/Logout'
 import { ProfileInfo } from './ProfileInfo'
 import { useGetMeQuery } from 'generated/graphql'
 import { unsetTokens } from 'features/authentication/utils'
@@ -41,21 +41,19 @@ export const ProfileMenu = () => {
   return (
     <>
       <IconButton size="small" onClick={handleClick}>
-        {me ? (
-          <Avatar
-            style={{
-              height: 32,
-              width: 32,
-            }}
-          >
+        <Avatar
+          style={{
+            height: 32,
+            width: 32,
+          }}
+        >
+          {me && (
             <Typography>
               {me.firstName.charAt(0).toUpperCase()}
               {me.lastName && me.lastName.charAt(0).toUpperCase()}
             </Typography>
-          </Avatar>
-        ) : (
-          <Avatar sx={{ width: 32, height: 32 }} alt="" />
-        )}
+          )}
+        </Avatar>
       </IconButton>
       <Menu
         anchorEl={anchorEl}
@@ -70,18 +68,18 @@ export const ProfileMenu = () => {
 
         <Divider />
 
-        <MenuItem>
+        {/* <MenuItem>
           <ListItemIcon>
             <AccountCircleIcon fontSize="small" />
           </ListItemIcon>
           <Typography>My profile</Typography>
         </MenuItem>
 
-        <Divider />
+        <Divider /> */}
 
         <MenuItem onClick={disconnect}>
           <ListItemIcon>
-            <LockRoundedIcon fontSize="small" />
+            <LogoutIcon fontSize="small" />
           </ListItemIcon>
           Logout
         </MenuItem>

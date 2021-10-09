@@ -9,14 +9,16 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import Typography from '@mui/material/Typography'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import IconButton from '@mui/material/IconButton'
 import { NavLink } from 'react-router-dom'
 import { styled } from '@mui/material/styles'
-import LogoSection from './LogoSection'
 import AccountBoxIcon from '@mui/icons-material/AccountBox'
 import AddIcon from '@mui/icons-material/Add'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
+import AddCircleIcon from '@mui/icons-material/AddCircle'
+import LogoSection from './LogoSection'
 import AddChannelDialog from './AddChannelDialog'
 import { useGetChannelsQuery } from 'generated/graphql'
 
@@ -31,7 +33,9 @@ export const Menu = () => {
   const { data: channelsData } = useGetChannelsQuery()
 
   const handleAddBtnClick = useCallback<
-    (type: 'CHANNEL' | 'DIRECT_MESSAGE') => MouseEventHandler<HTMLButtonElement>
+    (
+      type: 'CHANNEL' | 'DIRECT_MESSAGE',
+    ) => MouseEventHandler<HTMLButtonElement | HTMLDivElement>
   >(
     (type) => (event) => {
       event.stopPropagation()
@@ -48,16 +52,25 @@ export const Menu = () => {
   }, [])
 
   const menuSections = useMemo<MenuSection[]>(() => {
-    const sections: MenuSection[] = []
+    const sections: MenuSection[] = [
+      {
+        type: 'CHANNEL',
+        content: [],
+      },
+      {
+        type: 'DIRECT_MESSAGE',
+        content: [],
+      },
+    ]
 
     if (channelsData?.channels) {
-      sections.push({
+      sections[0] = {
         type: 'CHANNEL',
         content: channelsData.channels.map((channel) => ({
           id: channel.id,
           label: channel.name,
         })),
-      })
+      }
     }
 
     return sections
@@ -105,6 +118,7 @@ export const Menu = () => {
               {section.content?.map((item) => (
                 <ListItemButton
                   component={NavLink}
+                  sx={{ paddingLeft: (theme) => theme.spacing(3) }}
                   to={`${
                     section.type === 'CHANNEL'
                       ? '/channels'
@@ -125,6 +139,22 @@ export const Menu = () => {
                   <ListItemText primary={item.label} />
                 </ListItemButton>
               ))}
+
+              <ListItemButton
+                sx={{ paddingLeft: (theme) => theme.spacing(3) }}
+                onClick={handleAddBtnClick(section.type)}
+              >
+                <ListItemIcon style={{ minWidth: 32 }}>
+                  <AddCircleIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    section.type === 'CHANNEL'
+                      ? 'Add channel'
+                      : 'Create message'
+                  }
+                />
+              </ListItemButton>
             </List>
           </AccordionDetails>
         </Accordion>

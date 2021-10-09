@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -11,6 +11,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Date: any;
 };
 
 export type Channel = {
@@ -206,6 +207,7 @@ export type ResolversTypes = {
   Channel: ResolverTypeWrapper<Channel>;
   CreateChannelInput: CreateChannelInput;
   CreateUserInput: CreateUserInput;
+  Date: ResolverTypeWrapper<Scalars['Date']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   LoginPayload: ResolverTypeWrapper<LoginPayload>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -222,6 +224,7 @@ export type ResolversParentTypes = {
   Channel: Channel;
   CreateChannelInput: CreateChannelInput;
   CreateUserInput: CreateUserInput;
+  Date: Scalars['Date'];
   ID: Scalars['ID'];
   LoginPayload: LoginPayload;
   Mutation: {};
@@ -238,6 +241,10 @@ export type ChannelResolvers<ContextType = any, ParentType extends ResolversPare
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
+  name: 'Date';
+}
 
 export type LoginPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginPayload'] = ResolversParentTypes['LoginPayload']> = {
   accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -275,6 +282,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type Resolvers<ContextType = any> = {
   Channel?: ChannelResolvers<ContextType>;
+  Date?: GraphQLScalarType;
   LoginPayload?: LoginPayloadResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
