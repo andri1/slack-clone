@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { useHistory } from 'react-router'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
@@ -14,9 +15,12 @@ import { useLoginMutation } from 'generated/graphql'
 import { saveToken } from 'utils/authentication'
 
 export const Signin: FC = () => {
+  const history = useHistory()
+
   const [loginMutation] = useLoginMutation({
     onCompleted: (data) => {
       saveToken(data.login.accessToken)
+      history.push('/')
     },
   })
 

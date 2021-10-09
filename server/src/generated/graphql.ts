@@ -84,6 +84,7 @@ export type User = {
   __typename?: 'User';
   email: Scalars['String'];
   firstName: Scalars['String'];
+  id: Scalars['ID'];
   lastName?: Maybe<Scalars['String']>;
   password: Scalars['String'];
   username: Scalars['String'];
@@ -204,6 +205,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

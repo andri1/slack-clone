@@ -4,3 +4,5 @@ export const GRAPHQL_SERVER_URI =
 export const WS_URI = process.env.REACT_APP_WS_URL || 'ws://localhost:4000'
 
 export const TOKEN_STORAGE_KEY = '_tok'
+
+export const defaultPath = '/'

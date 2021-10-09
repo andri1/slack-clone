@@ -1,4 +1,7 @@
 import { FC } from 'react'
+import Divider from '@mui/material/Divider'
+import Header from './Header/Header'
+import Menu from './Menu/Menu'
 
 export const Layout: FC = (props) => {
   const { children } = props
@@ -7,12 +10,11 @@ export const Layout: FC = (props) => {
     <div
       style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}
     >
-      Header
+      <Header />
       <div style={{ flex: 1, display: 'flex' }}>
-        {/*  
-           Menu 
-        */}
-        <main>{children}</main>
+        <Menu />
+        <Divider orientation="vertical" flexItem />
+        <main style={{ flex: 1 }}>{children}</main>
       </div>
     </div>
   )

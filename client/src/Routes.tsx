@@ -7,9 +7,9 @@ import { Home, Signin } from './views'
 const Routes: FC = () => {
   return (
     <Switch>
-      <Redirect exact from="/" to="/sign-in" />
       <Route component={Signin} exact path="/sign-in" />
-      <RouteWithLayout component={Home} exact path="/home" />
+      <RouteWithLayout component={Home} exact path="/" />
+      <Redirect to="/" />
     </Switch>
   )
 }
