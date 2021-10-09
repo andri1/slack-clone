@@ -13,6 +13,18 @@ export type Scalars = {
   Float: number;
 };
 
+export type Channel = {
+  __typename?: 'Channel';
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
+export type CreateChannelInput = {
+  description?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
 export type CreateUserInput = {
   email: Scalars['String'];
   firstName: Scalars['String'];
@@ -28,16 +40,29 @@ export type LoginPayload = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createChannel: Channel;
   createUser: User;
+  deleteChannel: Channel;
   deleteUser: User;
   login: LoginPayload;
   signup: LoginPayload;
+  updateChannel: Channel;
   updateUser: User;
+};
+
+
+export type MutationCreateChannelArgs = {
+  input: CreateChannelInput;
 };
 
 
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
+};
+
+
+export type MutationDeleteChannelArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -57,20 +82,38 @@ export type MutationSignupArgs = {
 };
 
 
+export type MutationUpdateChannelArgs = {
+  input: UpdateChannelInput;
+};
+
+
 export type MutationUpdateUserArgs = {
   input: UpdateUserInput;
 };
 
 export type Query = {
   __typename?: 'Query';
+  channel: Channel;
+  channels?: Maybe<Array<Channel>>;
   me: User;
   user: User;
   users?: Maybe<Array<User>>;
 };
 
 
+export type QueryChannelArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type QueryUserArgs = {
   id: Scalars['ID'];
+};
+
+export type UpdateChannelInput = {
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
 };
 
 export type UpdateUserInput = {
@@ -160,12 +203,15 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Channel: ResolverTypeWrapper<Channel>;
+  CreateChannelInput: CreateChannelInput;
   CreateUserInput: CreateUserInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   LoginPayload: ResolverTypeWrapper<LoginPayload>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  UpdateChannelInput: UpdateChannelInput;
   UpdateUserInput: UpdateUserInput;
   User: ResolverTypeWrapper<User>;
 };
@@ -173,14 +219,24 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  Channel: Channel;
+  CreateChannelInput: CreateChannelInput;
   CreateUserInput: CreateUserInput;
   ID: Scalars['ID'];
   LoginPayload: LoginPayload;
   Mutation: {};
   Query: {};
   String: Scalars['String'];
+  UpdateChannelInput: UpdateChannelInput;
   UpdateUserInput: UpdateUserInput;
   User: User;
+};
+
+export type ChannelResolvers<ContextType = any, ParentType extends ResolversParentTypes['Channel'] = ResolversParentTypes['Channel']> = {
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type LoginPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginPayload'] = ResolversParentTypes['LoginPayload']> = {
@@ -189,14 +245,19 @@ export type LoginPayloadResolvers<ContextType = any, ParentType extends Resolver
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createChannel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<MutationCreateChannelArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
+  deleteChannel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<MutationDeleteChannelArgs, 'id'>>;
   deleteUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'id'>>;
   login?: Resolver<ResolversTypes['LoginPayload'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'login' | 'password'>>;
   signup?: Resolver<ResolversTypes['LoginPayload'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'input'>>;
+  updateChannel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<MutationUpdateChannelArgs, 'input'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'input'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  channel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<QueryChannelArgs, 'id'>>;
+  channels?: Resolver<Maybe<Array<ResolversTypes['Channel']>>, ParentType, ContextType>;
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
   users?: Resolver<Maybe<Array<ResolversTypes['User']>>, ParentType, ContextType>;
@@ -213,6 +274,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type Resolvers<ContextType = any> = {
+  Channel?: ChannelResolvers<ContextType>;
   LoginPayload?: LoginPayloadResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

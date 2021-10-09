@@ -3,7 +3,6 @@ import { useApolloClient } from '@apollo/client'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import { useHistory } from 'react-router-dom'
-import { unsetTokens } from 'utils/authentication'
 import IconButton from '@mui/material/IconButton'
 import Avatar from '@mui/material/Avatar'
 import ListItemIcon from '@mui/material/ListItemIcon'
@@ -13,6 +12,7 @@ import Typography from '@mui/material/Typography'
 import LockRoundedIcon from '@mui/icons-material/LockRounded'
 import { ProfileInfo } from './ProfileInfo'
 import { useGetMeQuery } from 'generated/graphql'
+import { unsetTokens } from 'features/authentication/utils'
 
 export const ProfileMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)

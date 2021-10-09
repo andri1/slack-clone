@@ -1,2 +1,2 @@
 export * from './Signin'
-export { Signin as default } from './Signin'
+export { default } from './Signin'

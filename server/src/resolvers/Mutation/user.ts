@@ -20,9 +20,9 @@ export const updateUser: MutationResolvers['updateUser'] = async (_, { input }) 
 }
 
 export const deleteUser: MutationResolvers['deleteUser'] = async (_, { id }) => {
-  const user = await UserModel.findByIdAndDelete(id)
+  const user = await UserModel.findByIdAndDelete(id).lean()
 
   if (!user) throw new ApolloError('User not found', 'NOT_FOUND')
 
-  return user._id
+  return user
 }

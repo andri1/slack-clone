@@ -10,7 +10,7 @@ import { WebSocketLink } from '@apollo/client/link/ws'
 import { onError } from '@apollo/client/link/error'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { GRAPHQL_SERVER_URI, WS_URI } from 'config'
-import { getToken } from 'utils/authentication'
+import { getToken } from 'features/authentication/utils'
 
 export const createClient = () => {
   const authLink = setContext((_, { headers }) => {

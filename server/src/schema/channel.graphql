@@ -1,0 +1,27 @@
+type Channel {
+  id: ID!
+  name: String!
+  description: String
+}
+
+type Query {
+  channel(id: ID!): Channel!
+  channels: [Channel!]
+}
+
+type Mutation {
+  createChannel(input: CreateChannelInput!): Channel!
+  updateChannel(input: UpdateChannelInput!): Channel!
+  deleteChannel(id: ID!): Channel!
+}
+
+input CreateChannelInput {
+  name: String!
+  description: String
+}
+
+input UpdateChannelInput {
+  id: ID!
+  name: String
+  description: String
+}

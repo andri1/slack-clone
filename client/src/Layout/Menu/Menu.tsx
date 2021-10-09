@@ -1,6 +1,6 @@
+import { MouseEventHandler, useCallback, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
 import MuiAccordionSummary, {
   AccordionSummaryProps,
@@ -10,49 +10,61 @@ import Typography from '@mui/material/Typography'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
+import IconButton from '@mui/material/IconButton'
+import { NavLink } from 'react-router-dom'
 import { styled } from '@mui/material/styles'
 import LogoSection from './LogoSection'
 import AccountBoxIcon from '@mui/icons-material/AccountBox'
+import AddIcon from '@mui/icons-material/Add'
+import ArrowRightIcon from '@mui/icons-material/ArrowRight'
+import AddChannelDialog from './AddChannelDialog'
+import { useGetChannelsQuery } from 'generated/graphql'
 
-const menuSections: {
+type MenuSection = {
   type: 'CHANNEL' | 'DIRECT_MESSAGE'
   content: { id: string; label: string }[]
-}[] = [
-  {
-    type: 'CHANNEL',
-    content: [
-      {
-        id: '1111',
-        label: 'Happy admin',
-      },
-      {
-        id: '2222',
-        label: 'Happy team',
-      },
-      {
-        id: '3333',
-        label: 'Happy dev',
-      },
-    ],
-  },
-  {
-    type: 'DIRECT_MESSAGE',
-    content: [
-      {
-        id: '1111',
-        label: 'Dude',
-      },
-      {
-        id: '2222',
-        label: 'Bro',
-      },
-    ],
-  },
-]
+}
 
 export const Menu = () => {
+  const [openAddChannel, setOpenAddChannel] = useState<boolean>(false)
+
+  const { data: channelsData } = useGetChannelsQuery()
+
+  const handleAddBtnClick = useCallback<
+    (type: 'CHANNEL' | 'DIRECT_MESSAGE') => MouseEventHandler<HTMLButtonElement>
+  >(
+    (type) => (event) => {
+      event.stopPropagation()
+
+      if (type === 'CHANNEL') {
+        setOpenAddChannel(true)
+      }
+    },
+    [],
+  )
+
+  const handleCloseAddChannelDialog = useCallback(() => {
+    setOpenAddChannel(false)
+  }, [])
+
+  const menuSections = useMemo<MenuSection[]>(() => {
+    const sections: MenuSection[] = []
+
+    if (channelsData?.channels) {
+      sections.push({
+        type: 'CHANNEL',
+        content: channelsData.channels.map((channel) => ({
+          id: channel.id,
+          label: channel.name,
+        })),
+      })
+    }
+
+    return sections
+  }, [channelsData])
+
   return (
-    <div style={{ width: 260 }}>
+    <Box sx={{ width: 260 }}>
       <Box sx={{ py: '12px', px: 2 }}>
         <LogoSection />
       </Box>
@@ -63,15 +75,43 @@ export const Menu = () => {
           <AccordionSummary
             aria-controls={`${section.type}-content`}
             id={`${section.type}-header`}
+            sx={{
+              '& .add-btn': {
+                display: { xs: 'flex', sm: 'none' },
+              },
+
+              '&:hover': {
+                '& .add-btn': {
+                  display: 'flex',
+                },
+              },
+            }}
           >
             <Typography>
               {section.type === 'CHANNEL' ? 'Channels' : 'Direct Messages'}
             </Typography>
+
+            <IconButton
+              size="small"
+              style={{ marginLeft: 'auto' }}
+              className="add-btn"
+              onClick={handleAddBtnClick(section.type)}
+            >
+              <AddIcon />
+            </IconButton>
           </AccordionSummary>
           <AccordionDetails>
             <List dense disablePadding component="nav">
-              {section.content?.map((link) => (
-                <ListItemButton key={link.id}>
+              {section.content?.map((item) => (
+                <ListItemButton
+                  component={NavLink}
+                  to={`${
+                    section.type === 'CHANNEL'
+                      ? '/channels'
+                      : '/direct-messages'
+                  }/${item.id}`}
+                  key={item.id}
+                >
                   <Box
                     sx={{
                       display: 'flex',
@@ -82,14 +122,19 @@ export const Menu = () => {
                   >
                     {section.type === 'CHANNEL' ? '#' : <AccountBoxIcon />}
                   </Box>
-                  <ListItemText primary={link.label} />
+                  <ListItemText primary={item.label} />
                 </ListItemButton>
               ))}
             </List>
           </AccordionDetails>
         </Accordion>
       ))}
-    </div>
+
+      <AddChannelDialog
+        open={openAddChannel}
+        onClose={handleCloseAddChannelDialog}
+      />
+    </Box>
   )
 }
 
@@ -102,21 +147,19 @@ const Accordion = styled((props: AccordionProps) => (
 }))
 
 const AccordionSummary = styled((props: AccordionSummaryProps) => (
-  <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
-    {...props}
-  />
-))(({ theme }) => ({
+  <MuiAccordionSummary expandIcon={<ArrowRightIcon />} {...props} />
+))(() => ({
   flexDirection: 'row-reverse',
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
     transform: 'rotate(90deg)',
   },
   '& .MuiAccordionSummary-content': {
-    marginLeft: theme.spacing(1),
+    alignItems: 'center',
+    margin: '7px 0px 7px 8px',
   },
 }))
 
-const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+const AccordionDetails = styled(MuiAccordionDetails)(() => ({
   padding: 0,
 }))
 

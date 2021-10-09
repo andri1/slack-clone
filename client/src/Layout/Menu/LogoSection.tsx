@@ -5,12 +5,7 @@ import { defaultPath } from 'config'
 
 export const LogoSection = () => (
   <ButtonBase disableRipple color="inherit" component={Link} to={defaultPath}>
-    <Typography
-      variant="h6"
-      color="inherit"
-      component="a"
-      style={{ fontWeight: 'bold' }}
-    >
+    <Typography variant="h6" color="inherit" style={{ fontWeight: 'bold' }}>
       Slack Clone
     </Typography>
   </ButtonBase>

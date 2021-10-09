@@ -6,7 +6,10 @@ import { ProfileMenu } from './ProfileMenu/ProfileMenu'
 export const Header: FC = () => {
   return (
     <>
-      <AppBar sx={{ boxShadow: 1 }} enableColorOnDark>
+      <AppBar
+        enableColorOnDark
+        sx={{ boxShadow: 1, backgroundColor: 'primary.dark' }}
+      >
         <Toolbar variant="dense">
           <div style={{ display: 'flex', width: '100%' }}>
             <div style={{ marginLeft: 'auto' }}>

@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography, { TypographyProps } from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { useLoginMutation } from 'generated/graphql'
-import { saveToken } from 'utils/authentication'
+import { saveToken } from 'features/authentication/utils'
 
 export const Signin: FC = () => {
   const history = useHistory()
