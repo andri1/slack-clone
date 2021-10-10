@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  mongo:
+    image: mongo:5.0
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo-volume:/data/db
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./client:/app
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - 4000:4000
+    volumes:
+      - ./server:/app
+    environment:
+      MONGODB_HOST: mongodb://mongo:27017/slack
+    depends_on:
+      - mongo

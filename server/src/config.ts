@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-export const mongoUrl = process.env.MONGODB_HOST || 'mongodb://localhost:27017/server'
+export const mongoUrl = process.env.MONGODB_HOST || 'mongodb://localhost:27017/slack'
 export const port = process.env.PORT || 4000
 
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'jwt-secret'
