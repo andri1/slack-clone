@@ -1,5 +1,4 @@
 import { Document } from 'mongoose'
-import { User, Channel } from '../generated/graphql'
+import { User } from '../generated/graphql'
 
 export type UserDoc = User & Document
-export type ChannelDoc = Channel & Document

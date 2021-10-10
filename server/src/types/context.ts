@@ -1,4 +1,4 @@
 export interface Context {
-  userId?: string
+  userID?: string
   authorization?: string
 }

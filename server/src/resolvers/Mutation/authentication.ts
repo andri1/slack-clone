@@ -14,14 +14,14 @@ export const login: MutationResolvers['login'] = async (
     throw new ApolloError('Wrong Password', 'WRONG_PASSWORD')
   }
 
-  const accessToken = makeAccessToken({ userId: user._id })
+  const accessToken = makeAccessToken({ userID: user._id })
 
   return { accessToken }
 }
 
 export const signup: MutationResolvers['signup'] = async (_, { input }) => {
   const user = await createUserDoc(input)
-  const accessToken = makeAccessToken({ userId: user._id })
+  const accessToken = makeAccessToken({ userID: user._id })
 
   return { accessToken }
 }

@@ -1,0 +1,30 @@
+type Message {
+  id: ID!
+  author: User!
+  content: String
+  recipientType: RecipientType!
+  "recipient if recipientType === USER"
+  recipientUser: User
+  "recipient if recipientType === CHANNEL"
+  channel: Channel
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+enum RecipientType {
+  CHANNEL
+  USER
+}
+
+type Query {
+  directMessages(recipientUserID: ID!): [Message!]!
+}
+
+type Mutation {
+  sendDirectMessage(input: CreateDirectMessageInput!): Message!
+}
+
+input CreateDirectMessageInput {
+  content: String
+  recipientUserID: ID!
+}

@@ -26,6 +26,11 @@ export type CreateChannelInput = {
   name: Scalars['String'];
 };
 
+export type CreateDirectMessageInput = {
+  content?: Maybe<Scalars['String']>;
+  recipientUserID: Scalars['ID'];
+};
+
 export type CreateUserInput = {
   email: Scalars['String'];
   firstName: Scalars['String'];
@@ -39,6 +44,20 @@ export type LoginPayload = {
   accessToken: Scalars['String'];
 };
 
+export type Message = {
+  __typename?: 'Message';
+  author: User;
+  /** recipient if recipientType === CHANNEL */
+  channel?: Maybe<Channel>;
+  content?: Maybe<Scalars['String']>;
+  createdAt: Scalars['Date'];
+  id: Scalars['ID'];
+  recipientType: RecipientType;
+  /** recipient if recipientType === USER */
+  recipientUser?: Maybe<User>;
+  updatedAt: Scalars['Date'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createChannel: Channel;
@@ -46,6 +65,7 @@ export type Mutation = {
   deleteChannel: Channel;
   deleteUser: User;
   login: LoginPayload;
+  sendDirectMessage: Message;
   signup: LoginPayload;
   updateChannel: Channel;
   updateUser: User;
@@ -78,6 +98,11 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationSendDirectMessageArgs = {
+  input: CreateDirectMessageInput;
+};
+
+
 export type MutationSignupArgs = {
   input: CreateUserInput;
 };
@@ -96,6 +121,7 @@ export type Query = {
   __typename?: 'Query';
   channel: Channel;
   channels?: Maybe<Array<Channel>>;
+  directMessages: Array<Message>;
   me: User;
   user: User;
   users?: Maybe<Array<User>>;
@@ -107,9 +133,19 @@ export type QueryChannelArgs = {
 };
 
 
+export type QueryDirectMessagesArgs = {
+  recipientUserID: Scalars['ID'];
+};
+
+
 export type QueryUserArgs = {
   id: Scalars['ID'];
 };
+
+export enum RecipientType {
+  Channel = 'CHANNEL',
+  User = 'USER'
+}
 
 export type UpdateChannelInput = {
   description?: Maybe<Scalars['String']>;
@@ -206,12 +242,15 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Channel: ResolverTypeWrapper<Channel>;
   CreateChannelInput: CreateChannelInput;
+  CreateDirectMessageInput: CreateDirectMessageInput;
   CreateUserInput: CreateUserInput;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   LoginPayload: ResolverTypeWrapper<LoginPayload>;
+  Message: ResolverTypeWrapper<Message>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  RecipientType: RecipientType;
   String: ResolverTypeWrapper<Scalars['String']>;
   UpdateChannelInput: UpdateChannelInput;
   UpdateUserInput: UpdateUserInput;
@@ -223,10 +262,12 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   Channel: Channel;
   CreateChannelInput: CreateChannelInput;
+  CreateDirectMessageInput: CreateDirectMessageInput;
   CreateUserInput: CreateUserInput;
   Date: Scalars['Date'];
   ID: Scalars['ID'];
   LoginPayload: LoginPayload;
+  Message: Message;
   Mutation: {};
   Query: {};
   String: Scalars['String'];
@@ -251,12 +292,25 @@ export type LoginPayloadResolvers<ContextType = any, ParentType extends Resolver
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MessageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Message'] = ResolversParentTypes['Message']> = {
+  author?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  channel?: Resolver<Maybe<ResolversTypes['Channel']>, ParentType, ContextType>;
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  recipientType?: Resolver<ResolversTypes['RecipientType'], ParentType, ContextType>;
+  recipientUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createChannel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<MutationCreateChannelArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'input'>>;
   deleteChannel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<MutationDeleteChannelArgs, 'id'>>;
   deleteUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'id'>>;
   login?: Resolver<ResolversTypes['LoginPayload'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'login' | 'password'>>;
+  sendDirectMessage?: Resolver<ResolversTypes['Message'], ParentType, ContextType, RequireFields<MutationSendDirectMessageArgs, 'input'>>;
   signup?: Resolver<ResolversTypes['LoginPayload'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'input'>>;
   updateChannel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<MutationUpdateChannelArgs, 'input'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'input'>>;
@@ -265,6 +319,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   channel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<QueryChannelArgs, 'id'>>;
   channels?: Resolver<Maybe<Array<ResolversTypes['Channel']>>, ParentType, ContextType>;
+  directMessages?: Resolver<Array<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<QueryDirectMessagesArgs, 'recipientUserID'>>;
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
   users?: Resolver<Maybe<Array<ResolversTypes['User']>>, ParentType, ContextType>;
@@ -284,6 +339,7 @@ export type Resolvers<ContextType = any> = {
   Channel?: ChannelResolvers<ContextType>;
   Date?: GraphQLScalarType;
   LoginPayload?: LoginPayloadResolvers<ContextType>;
+  Message?: MessageResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   User?: UserResolvers<ContextType>;

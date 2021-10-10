@@ -33,6 +33,11 @@ export type CreateChannelInput = {
   name: Scalars['String']
 }
 
+export type CreateDirectMessageInput = {
+  content?: Maybe<Scalars['String']>
+  recipientUserID: Scalars['ID']
+}
+
 export type CreateUserInput = {
   email: Scalars['String']
   firstName: Scalars['String']
@@ -46,6 +51,20 @@ export type LoginPayload = {
   accessToken: Scalars['String']
 }
 
+export type Message = {
+  __typename?: 'Message'
+  author: User
+  /** recipient if recipientType === CHANNEL */
+  channel?: Maybe<Channel>
+  content?: Maybe<Scalars['String']>
+  createdAt: Scalars['Date']
+  id: Scalars['ID']
+  recipientType: RecipientType
+  /** recipient if recipientType === USER */
+  recipientUser?: Maybe<User>
+  updatedAt: Scalars['Date']
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createChannel: Channel
@@ -53,6 +72,7 @@ export type Mutation = {
   deleteChannel: Channel
   deleteUser: User
   login: LoginPayload
+  sendDirectMessage: Message
   signup: LoginPayload
   updateChannel: Channel
   updateUser: User
@@ -79,6 +99,10 @@ export type MutationLoginArgs = {
   password: Scalars['String']
 }
 
+export type MutationSendDirectMessageArgs = {
+  input: CreateDirectMessageInput
+}
+
 export type MutationSignupArgs = {
   input: CreateUserInput
 }
@@ -95,6 +119,7 @@ export type Query = {
   __typename?: 'Query'
   channel: Channel
   channels?: Maybe<Array<Channel>>
+  directMessages: Array<Message>
   me: User
   user: User
   users?: Maybe<Array<User>>
@@ -104,8 +129,17 @@ export type QueryChannelArgs = {
   id: Scalars['ID']
 }
 
+export type QueryDirectMessagesArgs = {
+  recipientUserID: Scalars['ID']
+}
+
 export type QueryUserArgs = {
   id: Scalars['ID']
+}
+
+export enum RecipientType {
+  Channel = 'CHANNEL',
+  User = 'USER',
 }
 
 export type UpdateChannelInput = {
@@ -191,6 +225,59 @@ export type GetChannelsQuery = {
     | undefined
 }
 
+export type MessageInfoFragment = {
+  __typename?: 'Message'
+  id: string
+  content?: string | null | undefined
+  createdAt: any
+  updatedAt: any
+  author: {
+    __typename?: 'User'
+    firstName: string
+    lastName?: string | null | undefined
+  }
+}
+
+export type SendDirectMessageMutationVariables = Exact<{
+  input: CreateDirectMessageInput
+}>
+
+export type SendDirectMessageMutation = {
+  __typename?: 'Mutation'
+  sendDirectMessage: {
+    __typename?: 'Message'
+    id: string
+    content?: string | null | undefined
+    createdAt: any
+    updatedAt: any
+    author: {
+      __typename?: 'User'
+      firstName: string
+      lastName?: string | null | undefined
+    }
+  }
+}
+
+export type DirectMessagesQueryVariables = Exact<{
+  recipientUserID: Scalars['ID']
+}>
+
+export type DirectMessagesQuery = {
+  __typename?: 'Query'
+  directMessages: Array<{
+    __typename?: 'Message'
+    id: string
+    content?: string | null | undefined
+    createdAt: any
+    updatedAt: any
+    author: {
+      __typename?: 'User'
+      firstName: string
+      lastName?: string | null | undefined
+    }
+  }>
+}
+
 export type UserInfoFragment = {
   __typename?: 'User'
   id: string
@@ -230,11 +317,40 @@ export type GetUserQuery = {
   }
 }
 
+export type GetUsersQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetUsersQuery = {
+  __typename?: 'Query'
+  users?:
+    | Array<{
+        __typename?: 'User'
+        id: string
+        username: string
+        email: string
+        firstName: string
+        lastName?: string | null | undefined
+      }>
+    | null
+    | undefined
+}
+
 export const ChannelInfoFragmentDoc = gql`
   fragment ChannelInfo on Channel {
     id
     name
     description
+  }
+`
+export const MessageInfoFragmentDoc = gql`
+  fragment MessageInfo on Message {
+    id
+    author {
+      firstName
+      lastName
+    }
+    content
+    createdAt
+    updatedAt
   }
 `
 export const UserInfoFragmentDoc = gql`
@@ -458,6 +574,116 @@ export type GetChannelsQueryResult = Apollo.QueryResult<
   GetChannelsQuery,
   GetChannelsQueryVariables
 >
+export const SendDirectMessageDocument = gql`
+  mutation SendDirectMessage($input: CreateDirectMessageInput!) {
+    sendDirectMessage(input: $input) {
+      ...MessageInfo
+    }
+  }
+  ${MessageInfoFragmentDoc}
+`
+export type SendDirectMessageMutationFn = Apollo.MutationFunction<
+  SendDirectMessageMutation,
+  SendDirectMessageMutationVariables
+>
+
+/**
+ * __useSendDirectMessageMutation__
+ *
+ * To run a mutation, you first call `useSendDirectMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendDirectMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendDirectMessageMutation, { data, loading, error }] = useSendDirectMessageMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendDirectMessageMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SendDirectMessageMutation,
+    SendDirectMessageMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<
+    SendDirectMessageMutation,
+    SendDirectMessageMutationVariables
+  >(SendDirectMessageDocument, options)
+}
+export type SendDirectMessageMutationHookResult = ReturnType<
+  typeof useSendDirectMessageMutation
+>
+export type SendDirectMessageMutationResult =
+  Apollo.MutationResult<SendDirectMessageMutation>
+export type SendDirectMessageMutationOptions = Apollo.BaseMutationOptions<
+  SendDirectMessageMutation,
+  SendDirectMessageMutationVariables
+>
+export const DirectMessagesDocument = gql`
+  query DirectMessages($recipientUserID: ID!) {
+    directMessages(recipientUserID: $recipientUserID) {
+      ...MessageInfo
+    }
+  }
+  ${MessageInfoFragmentDoc}
+`
+
+/**
+ * __useDirectMessagesQuery__
+ *
+ * To run a query within a React component, call `useDirectMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDirectMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDirectMessagesQuery({
+ *   variables: {
+ *      recipientUserID: // value for 'recipientUserID'
+ *   },
+ * });
+ */
+export function useDirectMessagesQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    DirectMessagesQuery,
+    DirectMessagesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<DirectMessagesQuery, DirectMessagesQueryVariables>(
+    DirectMessagesDocument,
+    options,
+  )
+}
+export function useDirectMessagesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    DirectMessagesQuery,
+    DirectMessagesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<DirectMessagesQuery, DirectMessagesQueryVariables>(
+    DirectMessagesDocument,
+    options,
+  )
+}
+export type DirectMessagesQueryHookResult = ReturnType<
+  typeof useDirectMessagesQuery
+>
+export type DirectMessagesLazyQueryHookResult = ReturnType<
+  typeof useDirectMessagesLazyQuery
+>
+export type DirectMessagesQueryResult = Apollo.QueryResult<
+  DirectMessagesQuery,
+  DirectMessagesQueryVariables
+>
 export const GetMeDocument = gql`
   query GetMe {
     me {
@@ -557,4 +783,57 @@ export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>
 export type GetUserQueryResult = Apollo.QueryResult<
   GetUserQuery,
   GetUserQueryVariables
+>
+export const GetUsersDocument = gql`
+  query GetUsers {
+    users {
+      ...UserInfo
+    }
+  }
+  ${UserInfoFragmentDoc}
+`
+
+/**
+ * __useGetUsersQuery__
+ *
+ * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUsersQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(
+    GetUsersDocument,
+    options,
+  )
+}
+export function useGetUsersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUsersQuery,
+    GetUsersQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(
+    GetUsersDocument,
+    options,
+  )
+}
+export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>
+export type GetUsersLazyQueryHookResult = ReturnType<
+  typeof useGetUsersLazyQuery
+>
+export type GetUsersQueryResult = Apollo.QueryResult<
+  GetUsersQuery,
+  GetUsersQueryVariables
 >

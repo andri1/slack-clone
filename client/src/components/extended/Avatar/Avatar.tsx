@@ -3,19 +3,22 @@ import Typography from '@mui/material/Typography'
 import { User } from 'generated/graphql'
 
 export type AvatarProps = {
-  user: User
+  user?: Pick<User, 'firstName' | 'lastName'>
+  size?: number
 } & MuiAvatarProps
 
 export const Avatar = (props: AvatarProps) => {
-  const { user, ...rest } = props
+  const { user, size = 32, ...rest } = props
 
   return (
     <MuiAvatar
-      style={{
-        height: 32,
-        width: 32,
+      {...{
+        style: {
+          height: size,
+          width: size,
+        },
+        ...rest,
       }}
-      {...rest}
     >
       {user && (
         <Typography>

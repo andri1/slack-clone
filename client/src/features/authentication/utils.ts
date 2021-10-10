@@ -25,7 +25,7 @@ export const getTokenData = (): DecodedToken | null => {
 }
 
 type DecodedToken = {
-  userId: string
+  userID: string
   exp: string
   iat: string
 }

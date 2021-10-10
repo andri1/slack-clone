@@ -20,7 +20,11 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
 import LogoSection from './LogoSection'
 import AddChannelDialog from './AddChannelDialog'
-import { useGetChannelsQuery } from 'generated/graphql'
+import {
+  useGetChannelsQuery,
+  useGetMeQuery,
+  useGetUsersQuery,
+} from 'generated/graphql'
 
 type MenuSection = {
   type: 'CHANNEL' | 'DIRECT_MESSAGE'
@@ -31,6 +35,9 @@ export const Menu = () => {
   const [openAddChannel, setOpenAddChannel] = useState<boolean>(false)
 
   const { data: channelsData } = useGetChannelsQuery()
+  const { data: usersData } = useGetUsersQuery()
+  const { data } = useGetMeQuery()
+  const me = data?.me
 
   const handleAddBtnClick = useCallback<
     (
@@ -73,8 +80,20 @@ export const Menu = () => {
       }
     }
 
+    if (usersData?.users && me) {
+      sections[1] = {
+        type: 'DIRECT_MESSAGE',
+        content: usersData?.users
+          .filter((user) => user.id !== me.id)
+          .map((user) => ({
+            id: user.id,
+            label: user.firstName,
+          })),
+      }
+    }
+
     return sections
-  }, [channelsData])
+  }, [channelsData, usersData, me])
 
   return (
     <Box sx={{ width: 260 }}>
@@ -104,14 +123,16 @@ export const Menu = () => {
               {section.type === 'CHANNEL' ? 'Channels' : 'Direct Messages'}
             </Typography>
 
-            <IconButton
-              size="small"
-              style={{ marginLeft: 'auto' }}
-              className="add-btn"
-              onClick={handleAddBtnClick(section.type)}
-            >
-              <AddIcon />
-            </IconButton>
+            {section.type === 'CHANNEL' && (
+              <IconButton
+                size="small"
+                style={{ marginLeft: 'auto' }}
+                className="add-btn"
+                onClick={handleAddBtnClick(section.type)}
+              >
+                <AddIcon />
+              </IconButton>
+            )}
           </AccordionSummary>
           <AccordionDetails>
             <List dense disablePadding component="nav">
@@ -140,21 +161,17 @@ export const Menu = () => {
                 </ListItemButton>
               ))}
 
-              <ListItemButton
-                sx={{ paddingLeft: (theme) => theme.spacing(3) }}
-                onClick={handleAddBtnClick(section.type)}
-              >
-                <ListItemIcon style={{ minWidth: 32 }}>
-                  <AddCircleIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    section.type === 'CHANNEL'
-                      ? 'Add channel'
-                      : 'Create message'
-                  }
-                />
-              </ListItemButton>
+              {section.type === 'CHANNEL' && (
+                <ListItemButton
+                  sx={{ paddingLeft: (theme) => theme.spacing(3) }}
+                  onClick={handleAddBtnClick(section.type)}
+                >
+                  <ListItemIcon style={{ minWidth: 32 }}>
+                    <AddCircleIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Add channel" />
+                </ListItemButton>
+              )}
             </List>
           </AccordionDetails>
         </Accordion>

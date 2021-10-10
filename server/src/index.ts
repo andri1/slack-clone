@@ -11,7 +11,7 @@ import { resolvers } from './resolvers'
 import { connectToMongoDB } from './db/connect'
 import { port } from './config'
 import { verifyToken } from './services/authentication'
-import { Context } from './types/context'
+import { Context } from './types'
 
 export const schema = makeExecutableSchema({
   typeDefs,
@@ -39,9 +39,9 @@ const server = new ApolloServer({
   context: ({ req }): Context => {
     const token = req.headers.authorization
     try {
-      const { userId } = verifyToken(token)
+      const { userID } = verifyToken(token)
       return {
-        userId,
+        userID,
         authorization: token,
       }
     } catch (e) {

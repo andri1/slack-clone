@@ -21,7 +21,7 @@ export const findUserByLogin = async (login: string): Promise<UserDoc> => {
   return user
 }
 
-export const makeAccessToken: (payload: { userId: string }) => string = (payload) => {
+export const makeAccessToken: (payload: { userID: string }) => string = (payload) => {
   return jwt.sign(
     {
       ...payload,
@@ -36,5 +36,5 @@ export const verifyToken = (token: string): JWTTokenPayload => {
 }
 
 type JWTTokenPayload = {
-  userId: string
+  userID: string
 }

@@ -1,3 +1,4 @@
 export * from './Home'
 export * from './Signin'
-export * from './Channels'
+export * from './Channel'
+export * from './DirectMessage'

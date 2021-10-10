@@ -2,29 +2,40 @@ import { FC } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
-import AccountBoxIcon from '@mui/icons-material/AccountBox'
+import Avatar from 'components/extended/Avatar'
+import { UserInfoFragment } from 'generated/graphql'
 
 export type PageHeaderProps = {
   type: 'CH' | 'DM'
   title: string
   description?: string
+  user?: UserInfoFragment
 }
 
 export const PageHeader: FC<PageHeaderProps> = ({
   type,
   title,
   description,
+  user,
 }) => {
   return (
     <>
-      <Box sx={{ py: '12px', px: 2 }}>
+      <Box
+        sx={{
+          py: '12px',
+          px: 2,
+          display: 'flex',
+          alignItems: type === 'CH' ? 'baseline' : 'center',
+        }}
+      >
+        {type === 'DM' && <Avatar user={user} />}
         <Typography
           variant="h6"
           color="inherit"
-          component="span"
+          component="p"
           style={{ fontWeight: 'bold' }}
         >
-          {type === 'CH' ? '#' : <AccountBoxIcon />}&nbsp;{title}
+          {type === 'CH' ? '#' : ''}&nbsp;{title}
         </Typography>
 
         {description && (

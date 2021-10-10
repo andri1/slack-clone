@@ -18,3 +18,12 @@ export const GET_USER = gql`
   }
   ${USER_INFO_FRAGMENT}
 `
+
+export const GET_USERS = gql`
+  query GetUsers {
+    users {
+      ...UserInfo
+    }
+  }
+  ${USER_INFO_FRAGMENT}
+`

@@ -1,13 +1,10 @@
 import { QueryResolvers } from '../../generated/graphql'
 import { UserModel } from '../../db/models'
 import { Context } from '../../types/context'
-import { ApolloError } from 'apollo-server-core'
+import { getUserDocByID } from '../../services/user'
 
 export const user: QueryResolvers['user'] = async (_, { id }) => {
-  const userDoc = await UserModel.findById(id).lean()
-  if (!userDoc) throw new ApolloError('User not found', 'NOT_FOUND')
-
-  return userDoc
+  return getUserDocByID(id)
 }
 
 export const users: QueryResolvers['users'] = async () => {
@@ -15,5 +12,5 @@ export const users: QueryResolvers['users'] = async () => {
 }
 
 export const me: QueryResolvers<Context>['me'] = async (_, __, ctx) => {
-  return UserModel.findById(ctx.userId).lean()
+  return getUserDocByID(ctx.userID)
 }
