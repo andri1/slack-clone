@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Redirect, useHistory } from 'react-router'
+import { Redirect } from 'react-router'
 import Button from '@mui/material/Button'
 import Link from '@mui/material/Link'
 import Grid from '@mui/material/Grid'
@@ -13,12 +13,10 @@ import LogoSection from 'components/LogoSection'
 import Copyright from 'components/Copyright'
 
 export const Signup: FC = () => {
-  const history = useHistory()
-
   const [signupMutation] = useSignupMutation({
     onCompleted: (data) => {
       saveToken(data.signup.accessToken)
-      history.push('/')
+      window.location.href = '/'
     },
   })
 
