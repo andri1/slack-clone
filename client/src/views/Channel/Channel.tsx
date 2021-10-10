@@ -1,14 +1,14 @@
-import { FC, useCallback } from 'react'
+import { FC, useCallback, useEffect } from 'react'
 import { Chat, PageHeader } from 'components'
 import { useParams } from 'react-router-dom'
 import {
-  ChannelMessagesQuery,
-  ChannelMessagesQueryVariables,
+  ChannelMessageCreatedSubscription,
+  ChannelMessageCreatedSubscriptionVariables,
   useChannelMessagesQuery,
   useGetChannelQuery,
   useSendChannelMessageMutation,
 } from 'generated/graphql'
-import { CHANNEL_MESSAGES } from 'features/message/queries'
+import { CHANNEL_MESSAGE_CREATED } from 'features/message/subscription'
 
 export const Channel: FC = () => {
   const { channelID } = useParams<{ channelID: string }>()
@@ -18,42 +18,15 @@ export const Channel: FC = () => {
   })
   const channel = channelData?.channel
 
-  const { data: messagesData } = useChannelMessagesQuery({
+  const {
+    data: messagesData,
+    subscribeToMore: subscribeToMoreChannelMessages,
+  } = useChannelMessagesQuery({
     variables: { channelID },
   })
   const messages = messagesData?.channelMessages
 
-  const [sendChannelMessageMutation] = useSendChannelMessageMutation({
-    update: (cache, { data }) => {
-      const createdMessage = data?.sendChannelMessage
-
-      if (createdMessage) {
-        try {
-          const cacheMessagesData = cache.readQuery<
-            ChannelMessagesQuery,
-            ChannelMessagesQueryVariables
-          >({
-            query: CHANNEL_MESSAGES,
-            variables: { channelID: channel?.id! },
-          })
-          if (cacheMessagesData?.channelMessages) {
-            cache.writeQuery<
-              ChannelMessagesQuery,
-              ChannelMessagesQueryVariables
-            >({
-              query: CHANNEL_MESSAGES,
-              variables: { channelID: channel?.id! },
-              data: {
-                channelMessages: cacheMessagesData.channelMessages.concat([
-                  createdMessage,
-                ]),
-              },
-            })
-          }
-        } catch {}
-      }
-    },
-  })
+  const [sendChannelMessageMutation] = useSendChannelMessageMutation()
 
   const handleSubmitMessage = useCallback(
     (content: string) => {
@@ -70,6 +43,26 @@ export const Channel: FC = () => {
     },
     [sendChannelMessageMutation, channel],
   )
+
+  useEffect(() => {
+    subscribeToMoreChannelMessages<
+      ChannelMessageCreatedSubscription,
+      ChannelMessageCreatedSubscriptionVariables
+    >({
+      document: CHANNEL_MESSAGE_CREATED,
+      variables: { channelID },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+
+        const newMessage = subscriptionData.data.channelMessageCreated
+
+        return Object.assign({}, prev, {
+          channelMessages: [...prev.channelMessages, newMessage],
+        })
+      },
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

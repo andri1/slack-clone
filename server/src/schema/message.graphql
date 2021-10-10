@@ -26,6 +26,10 @@ type Mutation {
   sendChannelMessage(input: CreateChannelMessageInput!): Message!
 }
 
+type Subscription {
+  channelMessageCreated(channelID: ID!): Message!
+}
+
 input CreateDirectMessageInput {
   content: String
   recipientUserID: ID!

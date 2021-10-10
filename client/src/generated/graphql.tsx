@@ -157,6 +157,15 @@ export enum RecipientType {
   User = 'USER',
 }
 
+export type Subscription = {
+  __typename?: 'Subscription'
+  channelMessageCreated: Message
+}
+
+export type SubscriptionChannelMessageCreatedArgs = {
+  channelID: Scalars['ID']
+}
+
 export type UpdateChannelInput = {
   description?: Maybe<Scalars['String']>
   id: Scalars['ID']
@@ -331,6 +340,26 @@ export type ChannelMessagesQuery = {
       lastName?: string | null | undefined
     }
   }>
+}
+
+export type ChannelMessageCreatedSubscriptionVariables = Exact<{
+  channelID: Scalars['ID']
+}>
+
+export type ChannelMessageCreatedSubscription = {
+  __typename?: 'Subscription'
+  channelMessageCreated: {
+    __typename?: 'Message'
+    id: string
+    content?: string | null | undefined
+    createdAt: any
+    updatedAt: any
+    author: {
+      __typename?: 'User'
+      firstName: string
+      lastName?: string | null | undefined
+    }
+  }
 }
 
 export type UserInfoFragment = {
@@ -849,6 +878,48 @@ export type ChannelMessagesQueryResult = Apollo.QueryResult<
   ChannelMessagesQuery,
   ChannelMessagesQueryVariables
 >
+export const ChannelMessageCreatedDocument = gql`
+  subscription ChannelMessageCreated($channelID: ID!) {
+    channelMessageCreated(channelID: $channelID) {
+      ...MessageInfo
+    }
+  }
+  ${MessageInfoFragmentDoc}
+`
+
+/**
+ * __useChannelMessageCreatedSubscription__
+ *
+ * To run a query within a React component, call `useChannelMessageCreatedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useChannelMessageCreatedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChannelMessageCreatedSubscription({
+ *   variables: {
+ *      channelID: // value for 'channelID'
+ *   },
+ * });
+ */
+export function useChannelMessageCreatedSubscription(
+  baseOptions: Apollo.SubscriptionHookOptions<
+    ChannelMessageCreatedSubscription,
+    ChannelMessageCreatedSubscriptionVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSubscription<
+    ChannelMessageCreatedSubscription,
+    ChannelMessageCreatedSubscriptionVariables
+  >(ChannelMessageCreatedDocument, options)
+}
+export type ChannelMessageCreatedSubscriptionHookResult = ReturnType<
+  typeof useChannelMessageCreatedSubscription
+>
+export type ChannelMessageCreatedSubscriptionResult =
+  Apollo.SubscriptionResult<ChannelMessageCreatedSubscription>
 export const GetMeDocument = gql`
   query GetMe {
     me {

@@ -164,6 +164,16 @@ export enum RecipientType {
   User = 'USER'
 }
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  channelMessageCreated: Message;
+};
+
+
+export type SubscriptionChannelMessageCreatedArgs = {
+  channelID: Scalars['ID'];
+};
+
 export type UpdateChannelInput = {
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
@@ -270,6 +280,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   RecipientType: RecipientType;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Subscription: ResolverTypeWrapper<{}>;
   UpdateChannelInput: UpdateChannelInput;
   UpdateUserInput: UpdateUserInput;
   User: ResolverTypeWrapper<User>;
@@ -290,6 +301,7 @@ export type ResolversParentTypes = {
   Mutation: {};
   Query: {};
   String: Scalars['String'];
+  Subscription: {};
   UpdateChannelInput: UpdateChannelInput;
   UpdateUserInput: UpdateUserInput;
   User: User;
@@ -346,6 +358,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   users?: Resolver<Maybe<Array<ResolversTypes['User']>>, ParentType, ContextType>;
 };
 
+export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
+  channelMessageCreated?: SubscriptionResolver<ResolversTypes['Message'], "channelMessageCreated", ParentType, ContextType, RequireFields<SubscriptionChannelMessageCreatedArgs, 'channelID'>>;
+};
+
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -363,6 +379,7 @@ export type Resolvers<ContextType = any> = {
   Message?: MessageResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Subscription?: SubscriptionResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
 
