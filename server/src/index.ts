@@ -85,7 +85,7 @@ const start = async () => {
       schema,
       execute,
       subscribe,
-      async onConnect(connectionParams: { authorization?: string }): Promise<Context> {
+      onConnect(connectionParams: { authorization?: string }): Context {
         return createContext(connectionParams.authorization)
       },
     },

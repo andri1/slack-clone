@@ -43,24 +43,33 @@ export const DirectMessage: FC = () => {
   )
 
   useEffect(() => {
-    subscribeToMoreDirectMessages<
-      DirectMessageCreatedSubscription,
-      DirectMessageCreatedSubscriptionVariables
-    >({
-      document: DIRECT_MESSAGE_CREATED,
-      variables: { recipientUserID: userID },
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
+    let unsuscribe: any = null
 
-        const newMessage = subscriptionData.data.directMessageCreated
+    if (userID) {
+      unsuscribe = subscribeToMoreDirectMessages<
+        DirectMessageCreatedSubscription,
+        DirectMessageCreatedSubscriptionVariables
+      >({
+        document: DIRECT_MESSAGE_CREATED,
+        variables: { recipientUserID: userID },
+        updateQuery: (prev, { subscriptionData }) => {
+          if (!subscriptionData.data) return prev
 
-        return Object.assign({}, prev, {
-          directMessages: [...prev.directMessages, newMessage],
-        })
-      },
-    })
+          const newMessage = subscriptionData.data.directMessageCreated
+
+          return Object.assign({}, prev, {
+            directMessages: [...prev.directMessages, newMessage],
+          })
+        },
+      })
+    }
+
+    return () => {
+      if (unsuscribe) unsuscribe()
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [userID])
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

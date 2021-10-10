@@ -12,12 +12,14 @@ import { getMainDefinition } from '@apollo/client/utilities'
 import { GRAPHQL_SERVER_URI, WS_URI } from 'config'
 import { getToken } from 'features/authentication/utils'
 
+const token = getToken()
+
 export const createClient = () => {
   const authLink = setContext((_, { headers }) => {
     return {
       headers: {
         ...headers,
-        authorization: getToken() || '',
+        authorization: token || '',
       },
     }
   })
@@ -29,7 +31,7 @@ export const createClient = () => {
     options: {
       reconnect: true,
       connectionParams: {
-        authorization: getToken(),
+        authorization: token,
       },
     },
   })

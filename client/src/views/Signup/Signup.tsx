@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { useHistory } from 'react-router'
 import Button from '@mui/material/Button'
 import Link from '@mui/material/Link'
 import Grid from '@mui/material/Grid'
@@ -6,16 +7,18 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import TextField from 'components/extended/TextField'
-import { useLoginMutation } from 'generated/graphql'
+import { useSignupMutation } from 'generated/graphql'
 import { saveToken } from 'features/authentication/utils'
 import LogoSection from 'components/LogoSection'
 import Copyright from 'components/Copyright'
 
-export const Signin: FC = () => {
-  const [loginMutation] = useLoginMutation({
+export const Signup: FC = () => {
+  const history = useHistory()
+
+  const [signupMutation] = useSignupMutation({
     onCompleted: (data) => {
-      saveToken(data.login.accessToken)
-      window.location.href = '/'
+      saveToken(data.signup.accessToken)
+      history.push('/')
     },
   })
 
@@ -23,14 +26,25 @@ export const Signin: FC = () => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
 
-    const login = data.get('login') as string
+    const username = data.get('username') as string
+    const email = data.get('email') as string
+    const firstName = data.get('firstName') as string
+    const lastName = data.get('lastName') as string
     const password = data.get('password') as string
 
-    if (login && password) {
-      loginMutation({
-        variables: { login, password },
+    const input = {
+      username,
+      email,
+      firstName,
+      lastName,
+      password,
+    }
+
+    if (username && email && firstName && password) {
+      signupMutation({
+        variables: { input },
       }).catch(() => {
-        // TODO handle wrong login errors
+        // TODO handle wrong signup errors
       })
     }
   }
@@ -53,7 +67,7 @@ export const Signin: FC = () => {
         </Box>
 
         <Typography variant="h4" color="primary" style={{ fontWeight: 'bold' }}>
-          Sign in to your workspace
+          Create an account
         </Typography>
 
         <Container
@@ -66,19 +80,47 @@ export const Signin: FC = () => {
             margin="normal"
             required
             fullWidth
-            id="login"
-            label="Email Address or Username"
-            name="login"
+            id="firstName"
+            label="First name"
+            name="firstName"
+            size="small"
+          />
+          <TextField
+            margin="normal"
+            fullWidth
+            id="lastName"
+            label="Last name"
+            name="lastName"
             size="small"
           />
           <TextField
             margin="normal"
             required
             fullWidth
-            name="password"
-            label="Password"
-            type="password"
+            id="username"
+            label="Username"
+            name="username"
+            size="small"
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            type="email"
+            size="small"
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
             id="password"
+            label="Password"
+            name="password"
+            type="password"
             autoComplete="current-password"
             size="small"
           />
@@ -88,12 +130,12 @@ export const Signin: FC = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            Sign Up
           </Button>
           <Grid container>
             <Grid item>
-              <Link href="/signup" variant="body2">
-                Don't have an account? Sign Up
+              <Link href="/sign-in" variant="body2">
+                Already have an account? Sign in
               </Link>
             </Grid>
           </Grid>
@@ -105,4 +147,4 @@ export const Signin: FC = () => {
   )
 }
 
-export default Signin
+export default Signup

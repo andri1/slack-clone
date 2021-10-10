@@ -18,7 +18,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox'
 import AddIcon from '@mui/icons-material/Add'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
-import LogoSection from './LogoSection'
+import LogoSection from 'components/LogoSection'
 import AddChannelDialog from './AddChannelDialog'
 import {
   useGetChannelsQuery,

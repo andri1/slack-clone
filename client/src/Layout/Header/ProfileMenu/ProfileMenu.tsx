@@ -1,13 +1,10 @@
 import { MouseEvent, useState } from 'react'
-import { useApolloClient } from '@apollo/client'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { useHistory } from 'react-router-dom'
 import IconButton from '@mui/material/IconButton'
 import Avatar from '@mui/material/Avatar'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import Divider from '@mui/material/Divider'
-// import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import Typography from '@mui/material/Typography'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { ProfileInfo } from './ProfileInfo'
@@ -20,8 +17,6 @@ export const ProfileMenu = () => {
   const { data } = useGetMeQuery()
   const me = data?.me
 
-  const client = useApolloClient()
-
   const handleClick = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
   }
@@ -30,12 +25,9 @@ export const ProfileMenu = () => {
     setAnchorEl(null)
   }
 
-  const history = useHistory()
-
   const disconnect = () => {
     unsetTokens()
-    client.clearStore()
-    history.push('/sign-in')
+    window.location.href = '/sign-in'
   }
 
   return (
