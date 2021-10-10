@@ -11,15 +11,15 @@ import {
 import { DIRECT_MESSAGES } from 'features/message/queries'
 
 export const DirectMessage: FC = () => {
-  const { messageId } = useParams<{ messageId: string }>()
+  const { userID } = useParams<{ userID: string }>()
 
   const { data: userData } = useGetUserQuery({
-    variables: { id: messageId },
+    variables: { id: userID },
   })
   const user = userData?.user
 
   const { data: messagesData } = useDirectMessagesQuery({
-    variables: { recipientUserID: user?.id || '' },
+    variables: { recipientUserID: userID },
   })
   const messages = messagesData?.directMessages
 

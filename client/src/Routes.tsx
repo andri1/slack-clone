@@ -9,11 +9,11 @@ const Routes: FC = () => {
     <Switch>
       <Route component={Signin} exact path="/sign-in" />
       <RouteWithLayout component={Home} exact path="/" />
-      <RouteWithLayout component={Channel} path="/channels/:channelId" />
+      <RouteWithLayout component={Channel} path="/channels/:channelID" />
       <RouteWithLayout
         component={DirectMessage}
         exact
-        path="/direct-messages/:messageId"
+        path="/direct-messages/:userID"
       />
       <Redirect to="/" />
     </Switch>

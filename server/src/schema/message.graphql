@@ -18,13 +18,20 @@ enum RecipientType {
 
 type Query {
   directMessages(recipientUserID: ID!): [Message!]!
+  channelMessages(channelID: ID!): [Message!]!
 }
 
 type Mutation {
   sendDirectMessage(input: CreateDirectMessageInput!): Message!
+  sendChannelMessage(input: CreateChannelMessageInput!): Message!
 }
 
 input CreateDirectMessageInput {
   content: String
   recipientUserID: ID!
+}
+
+input CreateChannelMessageInput {
+  content: String
+  channelID: ID!
 }

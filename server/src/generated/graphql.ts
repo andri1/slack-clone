@@ -26,6 +26,11 @@ export type CreateChannelInput = {
   name: Scalars['String'];
 };
 
+export type CreateChannelMessageInput = {
+  channelID: Scalars['ID'];
+  content?: Maybe<Scalars['String']>;
+};
+
 export type CreateDirectMessageInput = {
   content?: Maybe<Scalars['String']>;
   recipientUserID: Scalars['ID'];
@@ -65,6 +70,7 @@ export type Mutation = {
   deleteChannel: Channel;
   deleteUser: User;
   login: LoginPayload;
+  sendChannelMessage: Message;
   sendDirectMessage: Message;
   signup: LoginPayload;
   updateChannel: Channel;
@@ -98,6 +104,11 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationSendChannelMessageArgs = {
+  input: CreateChannelMessageInput;
+};
+
+
 export type MutationSendDirectMessageArgs = {
   input: CreateDirectMessageInput;
 };
@@ -120,6 +131,7 @@ export type MutationUpdateUserArgs = {
 export type Query = {
   __typename?: 'Query';
   channel: Channel;
+  channelMessages: Array<Message>;
   channels?: Maybe<Array<Channel>>;
   directMessages: Array<Message>;
   me: User;
@@ -130,6 +142,11 @@ export type Query = {
 
 export type QueryChannelArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryChannelMessagesArgs = {
+  channelID: Scalars['ID'];
 };
 
 
@@ -242,6 +259,7 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Channel: ResolverTypeWrapper<Channel>;
   CreateChannelInput: CreateChannelInput;
+  CreateChannelMessageInput: CreateChannelMessageInput;
   CreateDirectMessageInput: CreateDirectMessageInput;
   CreateUserInput: CreateUserInput;
   Date: ResolverTypeWrapper<Scalars['Date']>;
@@ -262,6 +280,7 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   Channel: Channel;
   CreateChannelInput: CreateChannelInput;
+  CreateChannelMessageInput: CreateChannelMessageInput;
   CreateDirectMessageInput: CreateDirectMessageInput;
   CreateUserInput: CreateUserInput;
   Date: Scalars['Date'];
@@ -310,6 +329,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteChannel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<MutationDeleteChannelArgs, 'id'>>;
   deleteUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'id'>>;
   login?: Resolver<ResolversTypes['LoginPayload'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'login' | 'password'>>;
+  sendChannelMessage?: Resolver<ResolversTypes['Message'], ParentType, ContextType, RequireFields<MutationSendChannelMessageArgs, 'input'>>;
   sendDirectMessage?: Resolver<ResolversTypes['Message'], ParentType, ContextType, RequireFields<MutationSendDirectMessageArgs, 'input'>>;
   signup?: Resolver<ResolversTypes['LoginPayload'], ParentType, ContextType, RequireFields<MutationSignupArgs, 'input'>>;
   updateChannel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<MutationUpdateChannelArgs, 'input'>>;
@@ -318,6 +338,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   channel?: Resolver<ResolversTypes['Channel'], ParentType, ContextType, RequireFields<QueryChannelArgs, 'id'>>;
+  channelMessages?: Resolver<Array<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<QueryChannelMessagesArgs, 'channelID'>>;
   channels?: Resolver<Maybe<Array<ResolversTypes['Channel']>>, ParentType, ContextType>;
   directMessages?: Resolver<Array<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<QueryDirectMessagesArgs, 'recipientUserID'>>;
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;

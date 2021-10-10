@@ -9,3 +9,12 @@ export const SEND_DIRECT_MESSAGE = gql`
   }
   ${MESSAGE_INFO_FRAGMENT}
 `
+
+export const SEND_CHANNEL_MESSAGE = gql`
+  mutation SendChannelMessage($input: CreateChannelMessageInput!) {
+    sendChannelMessage(input: $input) {
+      ...MessageInfo
+    }
+  }
+  ${MESSAGE_INFO_FRAGMENT}
+`

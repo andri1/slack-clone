@@ -14,7 +14,7 @@ const messageSchema = new mongoose.Schema(
       enum: Object.values(RecipientType),
     },
     recipientUserID: Schema.Types.ObjectId,
-    channelrID: Schema.Types.ObjectId,
+    channelID: Schema.Types.ObjectId,
   },
   { timestamps: true },
 )
