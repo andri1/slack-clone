@@ -45,24 +45,33 @@ export const Channel: FC = () => {
   )
 
   useEffect(() => {
-    subscribeToMoreChannelMessages<
-      ChannelMessageCreatedSubscription,
-      ChannelMessageCreatedSubscriptionVariables
-    >({
-      document: CHANNEL_MESSAGE_CREATED,
-      variables: { channelID },
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev
+    let unsuscribe: any = null
 
-        const newMessage = subscriptionData.data.channelMessageCreated
+    if (channelID) {
+      unsuscribe = subscribeToMoreChannelMessages<
+        ChannelMessageCreatedSubscription,
+        ChannelMessageCreatedSubscriptionVariables
+      >({
+        document: CHANNEL_MESSAGE_CREATED,
+        variables: { channelID },
+        updateQuery: (prev, { subscriptionData }) => {
+          if (!subscriptionData.data) return prev
 
-        return Object.assign({}, prev, {
-          channelMessages: [...prev.channelMessages, newMessage],
-        })
-      },
-    })
+          const newMessage = subscriptionData.data.channelMessageCreated
+
+          return Object.assign({}, prev, {
+            channelMessages: [...prev.channelMessages, newMessage],
+          })
+        },
+      })
+    }
+
+    return () => {
+      if (unsuscribe) unsuscribe()
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [channelID])
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
