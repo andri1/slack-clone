@@ -60,15 +60,6 @@ export const ProfileMenu = () => {
 
         <Divider />
 
-        {/* <MenuItem>
-          <ListItemIcon>
-            <AccountCircleIcon fontSize="small" />
-          </ListItemIcon>
-          <Typography>My profile</Typography>
-        </MenuItem>
-
-        <Divider /> */}
-
         <MenuItem onClick={disconnect}>
           <ListItemIcon>
             <LogoutIcon fontSize="small" />

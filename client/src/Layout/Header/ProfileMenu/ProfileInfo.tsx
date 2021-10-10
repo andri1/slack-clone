@@ -1,10 +1,10 @@
 import Avatar from '@mui/material/Avatar'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
-import { GetMeQuery } from 'generated/graphql'
+import { UserInfoFragment } from 'generated/graphql'
 
 export type ProfileInfoProps = {
-  me: GetMeQuery['me']
+  me: UserInfoFragment
 }
 
 export const ProfileInfo = ({ me }: ProfileInfoProps) => {

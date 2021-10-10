@@ -131,7 +131,7 @@ export type Query = {
   channelMessages: Array<Message>
   channels?: Maybe<Array<Channel>>
   directMessages: Array<Message>
-  me: User
+  me?: Maybe<User>
   user: User
   users?: Maybe<Array<User>>
 }
@@ -409,14 +409,17 @@ export type GetMeQueryVariables = Exact<{ [key: string]: never }>
 
 export type GetMeQuery = {
   __typename?: 'Query'
-  me: {
-    __typename?: 'User'
-    id: string
-    username: string
-    email: string
-    firstName: string
-    lastName?: string | null | undefined
-  }
+  me?:
+    | {
+        __typename?: 'User'
+        id: string
+        username: string
+        email: string
+        firstName: string
+        lastName?: string | null | undefined
+      }
+    | null
+    | undefined
 }
 
 export type GetUserQueryVariables = Exact<{

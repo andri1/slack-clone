@@ -134,7 +134,7 @@ export type Query = {
   channelMessages: Array<Message>;
   channels?: Maybe<Array<Channel>>;
   directMessages: Array<Message>;
-  me: User;
+  me?: Maybe<User>;
   user: User;
   users?: Maybe<Array<User>>;
 };
@@ -359,7 +359,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   channelMessages?: Resolver<Array<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<QueryChannelMessagesArgs, 'channelID'>>;
   channels?: Resolver<Maybe<Array<ResolversTypes['Channel']>>, ParentType, ContextType>;
   directMessages?: Resolver<Array<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<QueryDirectMessagesArgs, 'recipientUserID'>>;
-  me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
   users?: Resolver<Maybe<Array<ResolversTypes['User']>>, ParentType, ContextType>;
 };

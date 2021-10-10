@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { Redirect } from 'react-router-dom'
 import Button from '@mui/material/Button'
 import Link from '@mui/material/Link'
 import Grid from '@mui/material/Grid'
@@ -6,8 +7,8 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import TextField from 'components/extended/TextField'
-import { useLoginMutation } from 'generated/graphql'
-import { saveToken } from 'features/authentication/utils'
+import { useGetMeQuery, useLoginMutation } from 'generated/graphql'
+import { getToken, saveToken } from 'features/authentication/utils'
 import LogoSection from 'components/LogoSection'
 import Copyright from 'components/Copyright'
 
@@ -18,6 +19,16 @@ export const Signin: FC = () => {
       window.location.href = '/'
     },
   })
+
+  const { data: meData, loading } = useGetMeQuery()
+  const me = meData?.me
+
+  if (!!getToken() && loading) {
+    return <Typography>Loading...</Typography>
+  }
+  if (me) {
+    return <Redirect to="/" />
+  }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()

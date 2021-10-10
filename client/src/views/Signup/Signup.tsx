@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { useHistory } from 'react-router'
+import { Redirect, useHistory } from 'react-router'
 import Button from '@mui/material/Button'
 import Link from '@mui/material/Link'
 import Grid from '@mui/material/Grid'
@@ -7,8 +7,8 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import TextField from 'components/extended/TextField'
-import { useSignupMutation } from 'generated/graphql'
-import { saveToken } from 'features/authentication/utils'
+import { useGetMeQuery, useSignupMutation } from 'generated/graphql'
+import { getToken, saveToken } from 'features/authentication/utils'
 import LogoSection from 'components/LogoSection'
 import Copyright from 'components/Copyright'
 
@@ -21,6 +21,16 @@ export const Signup: FC = () => {
       history.push('/')
     },
   })
+
+  const { data: meData, loading } = useGetMeQuery()
+  const me = meData?.me
+
+  if (!!getToken() && loading) {
+    return <Typography>Loading...</Typography>
+  }
+  if (me) {
+    return <Redirect to="/" />
+  }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()

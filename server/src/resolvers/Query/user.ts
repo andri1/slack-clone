@@ -12,5 +12,7 @@ export const users: QueryResolvers['users'] = async () => {
 }
 
 export const me: QueryResolvers<Context>['me'] = async (_, __, ctx) => {
-  return getUserDocByID(ctx.userID)
+  const foundUser = await UserModel.findById(ctx.userID).lean()
+
+  return foundUser || null
 }
