@@ -135,7 +135,17 @@ export const Menu = () => {
             )}
           </AccordionSummary>
           <AccordionDetails>
-            <List dense disablePadding component="nav">
+            <List
+              sx={{
+                '& .active-menu-link': {
+                  backgroundColor: 'primary.light',
+                  color: 'common.white',
+                },
+              }}
+              dense
+              disablePadding
+              component="nav"
+            >
               {section.content?.map((item) => (
                 <ListItemButton
                   component={NavLink}
@@ -146,6 +156,7 @@ export const Menu = () => {
                       : '/direct-messages'
                   }/${item.id}`}
                   key={item.id}
+                  activeClassName="active-menu-link"
                 >
                   <Box
                     sx={{
