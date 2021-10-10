@@ -1,18 +1,17 @@
 import { FC } from 'react'
 import { useHistory } from 'react-router'
-import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
 import Link from '@mui/material/Link'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography, { TypographyProps } from '@mui/material/Typography'
 import Container from '@mui/material/Container'
+import TextField from 'components/extended/TextField'
 import { useLoginMutation } from 'generated/graphql'
 import { saveToken } from 'features/authentication/utils'
+import LogoSection from 'Layout/Menu/LogoSection'
 
 export const Signin: FC = () => {
   const history = useHistory()
@@ -28,18 +27,23 @@ export const Signin: FC = () => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
 
-    const login = data.get('email') as string
+    const login = data.get('login') as string
     const password = data.get('password') as string
 
     if (login && password) {
       loginMutation({
         variables: { login, password },
+      }).catch(() => {
+        // TODO handle wrong login errors
       })
     }
   }
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container
+      maxWidth="sm"
+      style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+    >
       <Box
         sx={{
           paddingTop: 8,
@@ -48,23 +52,27 @@ export const Signin: FC = () => {
           alignItems: 'center',
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in
+        <Box sx={{ mb: 4 }}>
+          <LogoSection />
+        </Box>
+
+        <Typography variant="h4" color="primary" style={{ fontWeight: 'bold' }}>
+          Sign in to your workspace
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+
+        <Container
+          maxWidth="xs"
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ mt: 1 }}
+        >
           <TextField
             margin="normal"
             required
             fullWidth
             id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            type="email"
+            label="Email Address or Username"
+            name="login"
           />
           <TextField
             margin="normal"
@@ -89,20 +97,16 @@ export const Signin: FC = () => {
             Sign In
           </Button>
           <Grid container>
-            {/* <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid> */}
             <Grid item>
               <Link href="/signup" variant="body2">
                 Don't have an account? Sign Up
               </Link>
             </Grid>
           </Grid>
-        </Box>
+        </Container>
       </Box>
-      <Copyright sx={{ mt: 8, mb: 4 }} />
+
+      <Copyright sx={{ mt: 'auto', mb: 4 }} />
     </Container>
   )
 }
