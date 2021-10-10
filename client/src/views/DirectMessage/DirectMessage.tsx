@@ -83,7 +83,7 @@ export const DirectMessage: FC = () => {
         user={user}
       />
 
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, minHeight: 200 }}>
         <Chat messages={messages} onSubmit={handleSubmitMessage} />
       </div>
     </div>

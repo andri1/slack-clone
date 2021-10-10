@@ -1,21 +1,25 @@
 import React from 'react'
 import Avatar from 'components/extended/Avatar'
-import Box from '@mui/material/Box'
+import Box, { BoxProps } from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { MessageInfoFragment } from 'generated/graphql'
 
 type MessageProps = {
   message: MessageInfoFragment
-}
+} & BoxProps
 
-export const Message: React.FC<MessageProps> = ({ message }) => {
+export const Message: React.FC<MessageProps> = ({ message, sx, ...rest }) => {
   return (
     <Box
-      sx={{
-        p: 2,
-        '&:hover': {
-          backgroundColor: 'whitesmoke',
+      {...{
+        sx: {
+          p: 2,
+          '&:hover': {
+            backgroundColor: 'whitesmoke',
+          },
+          ...sx,
         },
+        ...rest,
       }}
     >
       <div style={{ display: 'flex' }}>

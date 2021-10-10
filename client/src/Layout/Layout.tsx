@@ -7,14 +7,19 @@ export const Layout: FC = (props) => {
   const { children } = props
 
   return (
-    <div
-      style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}
-    >
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <Header />
-      <div style={{ flex: 1, display: 'flex' }}>
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          minHeight: 200,
+          overflowY: 'hidden',
+        }}
+      >
         <Menu />
         <Divider orientation="vertical" flexItem />
-        <main style={{ flex: 1 }}>{children}</main>
+        <main style={{ flex: 1, maxHeight: '100%' }}>{children}</main>
       </div>
     </div>
   )

@@ -3,6 +3,8 @@ import {
   FC,
   FormEventHandler,
   useCallback,
+  useEffect,
+  useRef,
   useState,
 } from 'react'
 import Box from '@mui/material/Box'
@@ -20,6 +22,8 @@ export type ChatProps = {
 
 export const Chat: FC<ChatProps> = (props) => {
   const { onSubmit, messages } = props
+
+  const messagesWrapRef = useRef<HTMLDivElement>(null)
 
   const [inputValue, setInputValue] = useState<string>('')
 
@@ -44,21 +48,39 @@ export const Chat: FC<ChatProps> = (props) => {
     setInputValue(event.target.value)
   }, [])
 
+  useEffect(() => {
+    if (messagesWrapRef.current) {
+      messagesWrapRef.current.scrollTop = messagesWrapRef.current.scrollHeight
+    }
+  }, [messages])
+
   return (
     <Box
       sx={{
         height: '100%',
         maxHeight: '100%',
-        overflowY: 'auto',
-        py: 2,
+        pb: 2,
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'flex-end',
       }}
     >
-      {messages?.map((message) => (
-        <Message key={message.id} message={message} />
-      ))}
+      <div
+        ref={messagesWrapRef}
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        {messages?.map((message, i) => (
+          <Message
+            key={message.id}
+            message={message}
+            style={{ marginTop: i === 0 ? 'auto' : 'unset' }}
+          />
+        ))}
+      </div>
 
       <Paper
         component="form"
