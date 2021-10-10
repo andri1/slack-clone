@@ -1,14 +1,14 @@
-import { FC, useCallback } from 'react'
+import { FC, useCallback, useEffect } from 'react'
 import { Chat, PageHeader } from 'components'
 import { useParams } from 'react-router-dom'
 import {
-  DirectMessagesQuery,
-  DirectMessagesQueryVariables,
+  DirectMessageCreatedSubscription,
+  DirectMessageCreatedSubscriptionVariables,
   useDirectMessagesQuery,
   useGetUserQuery,
   useSendDirectMessageMutation,
 } from 'generated/graphql'
-import { DIRECT_MESSAGES } from 'features/message/queries'
+import { DIRECT_MESSAGE_CREATED } from 'features/message/subscription'
 
 export const DirectMessage: FC = () => {
   const { userID } = useParams<{ userID: string }>()
@@ -18,41 +18,13 @@ export const DirectMessage: FC = () => {
   })
   const user = userData?.user
 
-  const { data: messagesData } = useDirectMessagesQuery({
-    variables: { recipientUserID: userID },
-  })
+  const { data: messagesData, subscribeToMore: subscribeToMoreDirectMessages } =
+    useDirectMessagesQuery({
+      variables: { recipientUserID: userID },
+    })
   const messages = messagesData?.directMessages
 
-  const [sendDirectMessageMutation] = useSendDirectMessageMutation({
-    update: (cache, { data }) => {
-      const createdMessage = data?.sendDirectMessage
-
-      if (createdMessage) {
-        try {
-          const cacheMessagesData = cache.readQuery<
-            DirectMessagesQuery,
-            DirectMessagesQueryVariables
-          >({
-            query: DIRECT_MESSAGES,
-            variables: { recipientUserID: user?.id! },
-          })
-          if (cacheMessagesData?.directMessages) {
-            cache.writeQuery<DirectMessagesQuery, DirectMessagesQueryVariables>(
-              {
-                query: DIRECT_MESSAGES,
-                variables: { recipientUserID: user?.id! },
-                data: {
-                  directMessages: cacheMessagesData.directMessages.concat([
-                    createdMessage,
-                  ]),
-                },
-              },
-            )
-          }
-        } catch {}
-      }
-    },
-  })
+  const [sendDirectMessageMutation] = useSendDirectMessageMutation()
 
   const handleSubmitMessage = useCallback(
     (content: string) => {
@@ -69,6 +41,26 @@ export const DirectMessage: FC = () => {
     },
     [sendDirectMessageMutation, user],
   )
+
+  useEffect(() => {
+    subscribeToMoreDirectMessages<
+      DirectMessageCreatedSubscription,
+      DirectMessageCreatedSubscriptionVariables
+    >({
+      document: DIRECT_MESSAGE_CREATED,
+      variables: { recipientUserID: userID },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev
+
+        const newMessage = subscriptionData.data.directMessageCreated
+
+        return Object.assign({}, prev, {
+          directMessages: [...prev.directMessages, newMessage],
+        })
+      },
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

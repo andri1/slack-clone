@@ -167,11 +167,17 @@ export enum RecipientType {
 export type Subscription = {
   __typename?: 'Subscription';
   channelMessageCreated: Message;
+  directMessageCreated: Message;
 };
 
 
 export type SubscriptionChannelMessageCreatedArgs = {
   channelID: Scalars['ID'];
+};
+
+
+export type SubscriptionDirectMessageCreatedArgs = {
+  recipientUserID: Scalars['ID'];
 };
 
 export type UpdateChannelInput = {
@@ -360,6 +366,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
   channelMessageCreated?: SubscriptionResolver<ResolversTypes['Message'], "channelMessageCreated", ParentType, ContextType, RequireFields<SubscriptionChannelMessageCreatedArgs, 'channelID'>>;
+  directMessageCreated?: SubscriptionResolver<ResolversTypes['Message'], "directMessageCreated", ParentType, ContextType, RequireFields<SubscriptionDirectMessageCreatedArgs, 'recipientUserID'>>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {

@@ -5,18 +5,27 @@ import {
 } from '../../generated/graphql'
 import { MessageModel } from '../../db/models'
 import { Context } from '../../types'
-import { CHANNEL_MESSAGE_CREATED, NewChannelMessagePayload } from '../Subscription'
+import {
+  CHANNEL_MESSAGE_CREATED,
+  DIRECT_MESSAGE_CREATED,
+  NewChannelMessagePayload,
+  NewDirectMessagePayload,
+} from '../Subscription'
 
 export const sendDirectMessage = async (
   _: any,
   { input }: MutationSendDirectMessageArgs,
-  { userID }: Context,
+  { userID, pubsub }: Context,
 ): Promise<any> => {
   const newMessage = await new MessageModel({
     ...input,
     authorID: userID,
     recipientType: RecipientType.User,
   }).save()
+
+  pubsub.publish(DIRECT_MESSAGE_CREATED, {
+    directMessageCreated: newMessage.toObject(),
+  } as NewDirectMessagePayload)
 
   return newMessage
 }

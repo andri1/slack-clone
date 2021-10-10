@@ -27,6 +27,7 @@ type Mutation {
 }
 
 type Subscription {
+  directMessageCreated(recipientUserID: ID!): Message!
   channelMessageCreated(channelID: ID!): Message!
 }
 

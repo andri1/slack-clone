@@ -160,10 +160,15 @@ export enum RecipientType {
 export type Subscription = {
   __typename?: 'Subscription'
   channelMessageCreated: Message
+  directMessageCreated: Message
 }
 
 export type SubscriptionChannelMessageCreatedArgs = {
   channelID: Scalars['ID']
+}
+
+export type SubscriptionDirectMessageCreatedArgs = {
+  recipientUserID: Scalars['ID']
 }
 
 export type UpdateChannelInput = {
@@ -340,6 +345,26 @@ export type ChannelMessagesQuery = {
       lastName?: string | null | undefined
     }
   }>
+}
+
+export type DirectMessageCreatedSubscriptionVariables = Exact<{
+  recipientUserID: Scalars['ID']
+}>
+
+export type DirectMessageCreatedSubscription = {
+  __typename?: 'Subscription'
+  directMessageCreated: {
+    __typename?: 'Message'
+    id: string
+    content?: string | null | undefined
+    createdAt: any
+    updatedAt: any
+    author: {
+      __typename?: 'User'
+      firstName: string
+      lastName?: string | null | undefined
+    }
+  }
 }
 
 export type ChannelMessageCreatedSubscriptionVariables = Exact<{
@@ -878,6 +903,48 @@ export type ChannelMessagesQueryResult = Apollo.QueryResult<
   ChannelMessagesQuery,
   ChannelMessagesQueryVariables
 >
+export const DirectMessageCreatedDocument = gql`
+  subscription DirectMessageCreated($recipientUserID: ID!) {
+    directMessageCreated(recipientUserID: $recipientUserID) {
+      ...MessageInfo
+    }
+  }
+  ${MessageInfoFragmentDoc}
+`
+
+/**
+ * __useDirectMessageCreatedSubscription__
+ *
+ * To run a query within a React component, call `useDirectMessageCreatedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useDirectMessageCreatedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDirectMessageCreatedSubscription({
+ *   variables: {
+ *      recipientUserID: // value for 'recipientUserID'
+ *   },
+ * });
+ */
+export function useDirectMessageCreatedSubscription(
+  baseOptions: Apollo.SubscriptionHookOptions<
+    DirectMessageCreatedSubscription,
+    DirectMessageCreatedSubscriptionVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useSubscription<
+    DirectMessageCreatedSubscription,
+    DirectMessageCreatedSubscriptionVariables
+  >(DirectMessageCreatedDocument, options)
+}
+export type DirectMessageCreatedSubscriptionHookResult = ReturnType<
+  typeof useDirectMessageCreatedSubscription
+>
+export type DirectMessageCreatedSubscriptionResult =
+  Apollo.SubscriptionResult<DirectMessageCreatedSubscription>
 export const ChannelMessageCreatedDocument = gql`
   subscription ChannelMessageCreated($channelID: ID!) {
     channelMessageCreated(channelID: $channelID) {
