@@ -2,6 +2,8 @@
 
 This is a Slack clone made with React, Nodejs, GraphQL, and MongoDB.
 
+![Alt Text](./screenshots/overview.gif)
+
 ## Launch it
 
 ### With Docker Compose
