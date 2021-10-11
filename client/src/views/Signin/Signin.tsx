@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import Button from '@mui/material/Button'
 import Link from '@mui/material/Link'
@@ -20,6 +20,8 @@ export const Signin: FC = () => {
     },
   })
 
+  const [error, setError] = useState<any>(null)
+
   const { data: meData, loading } = useGetMeQuery()
   const me = meData?.me
 
@@ -40,10 +42,32 @@ export const Signin: FC = () => {
     if (login && password) {
       loginMutation({
         variables: { login, password },
-      }).catch(() => {
-        // TODO handle wrong login errors
+      }).catch((error) => {
+        const { graphQLErrors, networkError } = error
+        if (graphQLErrors?.[0]?.extensions?.code) {
+          switch (graphQLErrors[0].extensions?.code) {
+            case 'USER_NOT_FOUND':
+              setError({ login: 'Email address or username not found' })
+              break
+
+            case 'WRONG_PASSWORD':
+              setError({ password: 'Wrong password' })
+              break
+            default:
+              console.error(graphQLErrors[0].message)
+              break
+          }
+        } else if (networkError) {
+          console.error('Network error')
+        } else {
+          console.error('Unknown error')
+        }
       })
     }
+  }
+
+  const onInputChange = () => {
+    setError(null)
   }
 
   return (
@@ -81,6 +105,9 @@ export const Signin: FC = () => {
             label="Email Address or Username"
             name="login"
             size="small"
+            error={!!error?.login}
+            helperText={error?.login || ''}
+            onChange={onInputChange}
           />
           <TextField
             margin="normal"
@@ -92,6 +119,9 @@ export const Signin: FC = () => {
             id="password"
             autoComplete="current-password"
             size="small"
+            error={!!error?.password}
+            helperText={error?.password || ''}
+            onChange={onInputChange}
           />
           <Button
             type="submit"

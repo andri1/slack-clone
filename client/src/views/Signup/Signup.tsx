@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { Redirect } from 'react-router'
 import Button from '@mui/material/Button'
 import Link from '@mui/material/Link'
@@ -22,6 +22,8 @@ export const Signup: FC = () => {
 
   const { data: meData, loading } = useGetMeQuery()
   const me = meData?.me
+
+  const [error, setError] = useState<any>(null)
 
   if (!!getToken() && loading) {
     return <Typography>Loading...</Typography>
@@ -51,10 +53,32 @@ export const Signup: FC = () => {
     if (username && email && firstName && password) {
       signupMutation({
         variables: { input },
-      }).catch(() => {
-        // TODO handle wrong signup errors
+      }).catch((error) => {
+        const { graphQLErrors, networkError } = error
+        if (graphQLErrors?.[0]?.extensions?.code) {
+          switch (graphQLErrors[0].extensions.code) {
+            case 'ALREADY_USED_USERNAME':
+              setError({ username: 'This username is already used' })
+              break
+
+            case 'ALREADY_USED_EMAIL':
+              setError({ email: 'This email is already used' })
+              break
+            default:
+              console.error(graphQLErrors[0].message)
+              break
+          }
+        } else if (networkError) {
+          console.error('Network error')
+        } else {
+          console.error('Unknown error')
+        }
       })
     }
+  }
+
+  const onInputChange = () => {
+    setError(null)
   }
 
   return (
@@ -85,6 +109,8 @@ export const Signup: FC = () => {
           sx={{ mt: 1 }}
         >
           <TextField
+            error={!!error?.login}
+            helperText={error?.login || ''}
             margin="normal"
             required
             fullWidth
@@ -109,6 +135,9 @@ export const Signup: FC = () => {
             label="Username"
             name="username"
             size="small"
+            onChange={onInputChange}
+            error={!!error?.username}
+            helperText={error?.username || ''}
           />
           <TextField
             margin="normal"
@@ -120,6 +149,9 @@ export const Signup: FC = () => {
             autoComplete="email"
             type="email"
             size="small"
+            onChange={onInputChange}
+            error={!!error?.email}
+            helperText={error?.email || ''}
           />
           <TextField
             margin="normal"

@@ -4,6 +4,13 @@ import { UserModel } from '../db/models'
 import { CreateUserInput } from '../generated/graphql'
 
 export const createUserDoc = async (input: CreateUserInput) => {
+  if (await UserModel.findOne({ email: input.email })) {
+    throw new ApolloError('This email is already used', 'ALREADY_USED_EMAIL')
+  }
+  if (await UserModel.findOne({ username: input.username })) {
+    throw new ApolloError('This username is already used', 'ALREADY_USED_USERNAME')
+  }
+
   const hashedPassword = bcrypt.hashSync(input.password, 10)
   const newUser: CreateUserInput = { ...input, password: hashedPassword }
 
