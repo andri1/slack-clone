@@ -140,6 +140,9 @@ export const Menu = () => {
                 '& .active-menu-link': {
                   backgroundColor: 'primary.light',
                   color: 'common.white',
+                  '&:hover': {
+                    color: 'text.secondary',
+                  },
                 },
               }}
               dense
